@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: collab_notes
+      POSTGRES_USER: collab_notes
+      POSTGRES_PASSWORD: collab_notes
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://collab_notes:collab_notes@postgres:5432/collab_notes
+      JWT_SECRET: "changeme"
+      REDIS_URL: redis://redis:6379
+      NEXT_PUBLIC_REALTIME_URL: ws://localhost:4001
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "3000:3000"
+
+  realtime:
+    build:
+      context: .
+      dockerfile: Dockerfile.realtime
+    environment:
+      JWT_SECRET: "changeme"
+      REDIS_URL: redis://redis:6379
+      REALTIME_PORT: "4001"
+      DATABASE_URL: postgresql://collab_notes:collab_notes@postgres:5432/collab_notes
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "4001:4001"
+
+volumes:
+  postgres_data:

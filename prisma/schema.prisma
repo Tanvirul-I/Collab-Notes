@@ -1,0 +1,72 @@
+// Prisma schema for Collab Notes core app
+// https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String              @id @default(cuid())
+  email        String              @unique
+  name         String
+  avatarColor  String
+  passwordHash String
+  documents    Document[]
+  versions     DocumentVersion[]
+  sharedDocs   DocumentShare[]
+  shareLinks   DocumentShareLink[]
+}
+
+model Document {
+  id         String              @id @default(cuid())
+  ownerId    String
+  title      String
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  owner      User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  versions   DocumentVersion[]
+  shares     DocumentShare[]
+  shareLinks DocumentShareLink[]
+}
+
+model DocumentVersion {
+  id         String   @id @default(cuid())
+  documentId String
+  createdAt  DateTime @default(now())
+  authorId   String
+  summary    String
+  snapshot   String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model DocumentShare {
+  id         String   @id @default(cuid())
+  documentId String
+  userId     String
+  permission String   // "viewer" or "editor"
+  createdAt  DateTime @default(now())
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, userId])
+}
+
+model DocumentShareLink {
+  id          String   @id @default(cuid())
+  documentId  String
+  token       String   @unique
+  permission  String   // "viewer" or "editor"
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
+  createdById String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}

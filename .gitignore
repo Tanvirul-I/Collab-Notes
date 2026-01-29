@@ -1,0 +1,8 @@
+node_modules
+.next
+.env
+.env.local
+pnpm-lock.yaml
+npm-debug.log*
+yarn-error.log*
+.prisma
