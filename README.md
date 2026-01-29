@@ -235,7 +235,6 @@ Redis is optional. If not running, you'll see warnings but the app will work wit
 - [Deployment](docs/DEPLOYMENT.md) - Cloud deployment guide
 - [Sharing Model](docs/SHARING_MODEL.md) - Permission system details
 - [Observability](docs/OBSERVABILITY.md) - Metrics and monitoring
-- [GitHub Setup](docs/GITHUB_SETUP.md) - CI/CD configuration
 
 ---
 
