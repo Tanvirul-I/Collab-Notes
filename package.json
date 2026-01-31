@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "realtime:server": "node server/realtime-server.mjs",
-    "lint": "next lint",
+    "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false next lint",
     "typecheck": "tsc --noEmit",
     "test": "echo \"No tests yet\"",
     "prisma:migrate": "prisma migrate dev --name init",
@@ -40,8 +40,9 @@
     "@types/node": "22.5.2",
     "@types/react": "18.3.5",
     "@types/react-dom": "18.3.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.2",
-    "eslint-config-next": "^16.1.1",
+    "eslint-config-next": "16.1.6",
     "prisma": "^5.18.0",
     "typescript": "5.5.4"
   }
